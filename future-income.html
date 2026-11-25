@@ -259,14 +259,14 @@
 </head>
 <body>
   <div class="topbar">
-    <a href="/">&larr; All Retirement Tools</a>
+    <a href="/" id="backLink">&larr; All Retirement Tools</a>
     <span>Jerry Roman</span>
   </div>
 
   <div class="hero">
     <div class="hero-kicker">Future Income Deferral Multiplier</div>
     <h1>Could One Market Correction Delay Your Retirement Date by 3 to 5 Years?</h1>
-    <p>See how locking in a contractual income roll-up today grows your future retirement paycheck—regardless of what Wall Street does between now and retirement.</p>
+    <p>See how locking in an income roll-up rate today grows your future retirement paycheck—regardless of what Wall Street does between now and retirement.</p>
   </div>
 
   <div class="wrap">
@@ -345,8 +345,8 @@
             <strong id="increaseOut" style="color: #15803d;">+55% More / mo</strong>
           </div>
           <div class="compare-item">
-            <span>Cost of Waiting Without a Roll-Up</span>
-            <strong id="costWaitOut" style="color: #b91c1c;">-$13,560 / yr missed</strong>
+            <span>Annual Paycheck Difference</span>
+            <strong id="costWaitOut" style="color: #b91c1c;">-$13,560 / yr difference</strong>
           </div>
         </div>
       </div>
@@ -362,7 +362,7 @@
 
       <div class="cta-section">
         <p class="expectation-note">On a quick 15-minute discovery call, we will show you the top deferral roll-up rates available in your state for your exact target start age.</p>
-        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn">See Top Roll-Up Carriers in My State &rarr;</a>
+        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn" id="bookCtaBtn">See Top Roll-Up Carriers in My State &rarr;</a>
         <div class="cta-note">15-minute review &bull; No obligation and no pressure to move anything</div>
       </div>
     </div>
@@ -373,14 +373,61 @@
   </footer>
 
   <script>
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxlDtzR-0IH841BA84JSsCgSUU87NRTk8FLvlRkC9t0VhlYYhhhATAUqkj_mIEl72Kv/exec";
+    const leadName = new URLSearchParams(window.location.search).get("lead") || "Anonymous";
+    if (leadName !== "Anonymous") {
+      document.getElementById("backLink").href = "/?lead=" + encodeURIComponent(leadName);
+    }
+
     let currentAssets = 400000;
+    let accountType = 'Active / Old 401(k)';
+    let latestSummary = '';
+    let latestDetails = '';
+    let hasLoggedEngagement = false;
+    let engageTimer = null;
+
     const sliderEl = document.getElementById('assetsSlider');
     const inputEl = document.getElementById('assetsInput');
 
+    const posLabels = {
+      '401k': 'Active / Old 401(k)',
+      'ira': 'Traditional / Roth IRA',
+      'cash': 'Savings / CDs'
+    };
+
+    function sendLog(eventName) {
+      fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: true,
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({
+          event: eventName,
+          calculator: "Future Income",
+          accountType: accountType,
+          amount: fmt(currentAssets),
+          details: latestDetails,
+          result: latestSummary,
+          lead: leadName
+        })
+      });
+    }
+
+    function markUserInteraction() {
+      if (hasLoggedEngagement) return;
+      clearTimeout(engageTimer);
+      engageTimer = setTimeout(function () {
+        hasLoggedEngagement = true;
+        sendLog("Engaged_Calculation");
+      }, 2000);
+    }
+
     function setPos(p) {
+      accountType = posLabels[p];
       document.getElementById('pos401k').classList.toggle('active', p === '401k');
       document.getElementById('posIra').classList.toggle('active', p === 'ira');
       document.getElementById('posCash').classList.toggle('active', p === 'cash');
+      markUserInteraction();
     }
 
     function fmt(num) {
@@ -396,6 +443,7 @@
       currentAssets = parseInt(this.value, 10);
       inputEl.value = currentAssets.toLocaleString('en-US');
       calculate();
+      markUserInteraction();
     });
 
     inputEl.addEventListener('input', function () {
@@ -403,6 +451,7 @@
       currentAssets = val;
       sliderEl.value = Math.min(Math.max(val, 50000), 2000000);
       calculate();
+      markUserInteraction();
     });
 
     inputEl.addEventListener('blur', function () {
@@ -434,6 +483,9 @@
       const pctIncrease = nowMonthly > 0 ? ((midFutureMonthly - nowMonthly) / nowMonthly) * 100 : 0;
       const annualDiff = (midFutureMonthly - nowMonthly) * 12;
 
+      latestSummary = `${fmt(lowFutureMonthly)} – ${fmt(highFutureMonthly)} / mo at Age ${startAge}`;
+      latestDetails = `Current Age: ${age} | Defer: ${years} yrs (Start Age ${startAge})`;
+
       document.getElementById('resHeading').textContent = `Projected Monthly Lifetime Income at Age ${startAge}`;
       document.getElementById('futureMonthlyOut').textContent = `${fmt(lowFutureMonthly)} – ${fmt(highFutureMonthly)} / mo`;
       document.getElementById('incomeBaseOut').textContent = `Projected Income Base: ${fmt(incomeBase)} (7% illustrative annual roll-up)`;
@@ -449,8 +501,20 @@
       document.getElementById('costWaitOut').textContent = `-${fmt(annualDiff)} / yr difference`;
     }
 
-    document.getElementById('age').addEventListener('input', calculate);
-    document.getElementById('years').addEventListener('input', calculate);
+    document.getElementById('age').addEventListener('input', function () {
+      calculate();
+      markUserInteraction();
+    });
+
+    document.getElementById('years').addEventListener('input', function () {
+      calculate();
+      markUserInteraction();
+    });
+
+    document.getElementById('bookCtaBtn').addEventListener('click', function () {
+      sendLog("CTA_Book_Click");
+    });
+
     calculate();
   </script>
 </body>
