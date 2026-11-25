@@ -58,16 +58,56 @@
     .control-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 8px;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
     .control label { font-weight: 600; font-size: 15px; color: var(--navy); }
     .val-display { font-size: 20px; font-weight: 700; color: var(--gold); }
+    .money-input-wrap {
+      display: inline-flex;
+      align-items: center;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 6px 12px;
+      background: #f8fafc;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .money-input-wrap:focus-within {
+      border-color: var(--gold);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(197, 155, 39, 0.18);
+    }
+    .money-prefix {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-right: 4px;
+    }
+    .money-input {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      width: 135px;
+      text-align: right;
+      outline: none;
+      font-family: inherit;
+    }
     input[type="range"] {
       width: 100%;
       accent-color: var(--navy);
       height: 6px;
       cursor: pointer;
+    }
+    .slider-hints {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 4px;
     }
     .results-grid {
       display: grid;
@@ -155,10 +195,18 @@
     <div class="calc-card">
       <div class="control">
         <div class="control-header">
-          <label for="assets">Non-Qualified Savings Amount</label>
-          <span class="val-display" id="assetsVal">$500,000</span>
+          <label for="assetsInput">Non-Qualified Savings Amount (Slide or Type Exact Amount)</label>
+          <div class="money-input-wrap">
+            <span class="money-prefix">$</span>
+            <input type="text" inputmode="numeric" id="assetsInput" class="money-input" value="500,000" aria-label="Exact non-qualified savings amount" />
+          </div>
         </div>
-        <input type="range" id="assets" min="100000" max="3000000" value="500000" step="50000" />
+        <input type="range" id="assetsSlider" min="50000" max="3000000" value="500000" step="50000" />
+        <div class="slider-hints">
+          <span>$50k</span>
+          <span>Type any exact amount above</span>
+          <span>$3M+</span>
+        </div>
       </div>
 
       <div class="control">
@@ -207,17 +255,45 @@
   </footer>
 
   <script>
+    let currentAssets = 500000;
+    const sliderEl = document.getElementById('assetsSlider');
+    const inputEl = document.getElementById('assetsInput');
+
     function fmt(num) {
       return '$' + Math.round(num).toLocaleString('en-US');
     }
 
+    function parseMoney(str) {
+      const cleaned = String(str).replace(/[^0-9]/g, '');
+      return cleaned ? parseInt(cleaned, 10) : 0;
+    }
+
+    sliderEl.addEventListener('input', function () {
+      currentAssets = parseInt(this.value, 10);
+      inputEl.value = currentAssets.toLocaleString('en-US');
+      calculate();
+    });
+
+    inputEl.addEventListener('input', function () {
+      const val = parseMoney(this.value);
+      currentAssets = val;
+      sliderEl.value = Math.min(Math.max(val, 50000), 3000000);
+      calculate();
+    });
+
+    inputEl.addEventListener('blur', function () {
+      if (currentAssets < 10000) currentAssets = 10000;
+      this.value = currentAssets.toLocaleString('en-US');
+      sliderEl.value = Math.min(Math.max(currentAssets, 50000), 3000000);
+      calculate();
+    });
+
     function calculate() {
-      const principal = parseInt(document.getElementById('assets').value, 10);
+      const principal = currentAssets;
       const taxPct = parseInt(document.getElementById('taxRate').value, 10) / 100;
       const years = parseInt(document.getElementById('years').value, 10);
       const grossRate = 0.06;
 
-      document.getElementById('assetsVal').textContent = fmt(principal);
       document.getElementById('taxVal').textContent = `${Math.round(taxPct * 100)}%`;
       document.getElementById('yearsVal').textContent = `${years} Years`;
 
@@ -232,7 +308,6 @@
       document.getElementById('advantageBanner').innerHTML = `Tax-Deferral Advantage: <strong>+${fmt(diff)} more</strong> compounding in your account over ${years} years—and you control when distributions are taxed.`;
     }
 
-    document.getElementById('assets').addEventListener('input', calculate);
     document.getElementById('taxRate').addEventListener('input', calculate);
     document.getElementById('years').addEventListener('input', calculate);
     calculate();
