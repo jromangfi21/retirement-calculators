@@ -247,7 +247,7 @@
 </head>
 <body>
   <div class="topbar">
-    <a href="/">&larr; All Retirement Tools</a>
+    <a href="/" id="backLink">&larr; All Retirement Tools</a>
     <span>Jerry Roman</span>
   </div>
 
@@ -263,7 +263,7 @@
         <div class="step-badge">Step 1 &bull; Your Priority</div>
         <label style="display:block; margin-bottom:6px;">What matters most for this portion of your savings?</label>
         <div class="toggle-group">
-          <button type="button" class="toggle-btn active" id="pProt" onclick="setPriority('prot')">Never Lose Principal</button>
+          <button type="button" class="toggle-btn active" id="pProt" onclick="setPriority('prot')">Protect Principal</button>
           <button type="button" class="toggle-btn" id="pBeat" onclick="setPriority('beat')">Beat Bank CD Rates</button>
           <button type="button" class="toggle-btn" id="pBoth" onclick="setPriority('both')">Growth + Protection</button>
         </div>
@@ -316,14 +316,14 @@
         <h3>Questions to Consider Before Leaving Your Savings Exposed:</h3>
         <ul>
           <li>At this stage of retirement, how much of a temporary market drop are you genuinely willing to sit through?</li>
-          <li>When gains lock in every year and can never be lost to a downturn, how does that change how you feel about your nest egg?</li>
+          <li>When gains lock in every year and cannot be lost to a market downturn, how does that change how you feel about your nest egg?</li>
           <li>Would it make sense to review current fixed and indexed rates in your state before deciding where to park this money?</li>
         </ul>
       </div>
 
       <div class="cta-section">
-        <p class="expectation-note">On a brief 15-minute discovery call, we will compare current guaranteed fixed rates and S&amp;P 500 index caps from top A-rated carriers in your state.</p>
-        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn">Compare Current Protected Rates in My State &rarr;</a>
+        <p class="expectation-note">On a brief 15-minute discovery call, we will compare current fixed rates and S&amp;P 500 index caps from top A-rated carriers in your state.</p>
+        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn" id="bookCtaBtn">Compare Current Protected Rates in My State &rarr;</a>
         <div class="cta-note">15-minute review &bull; No obligation and no pressure to move anything</div>
       </div>
     </div>
@@ -334,18 +334,65 @@
   </footer>
 
   <script>
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxlDtzR-0IH841BA84JSsCgSUU87NRTk8FLvlRkC9t0VhlYYhhhATAUqkj_mIEl72Kv/exec";
+    const leadName = new URLSearchParams(window.location.search).get("lead") || "Anonymous";
+    if (leadName !== "Anonymous") {
+      document.getElementById("backLink").href = "/?lead=" + encodeURIComponent(leadName);
+    }
+
     let horizon = 7;
     let currentAssets = 300000;
+    let priorityLabel = 'Protect Principal';
+    let latestSummary = '';
+    let latestDetails = '';
+    let hasLoggedEngagement = false;
+    let engageTimer = null;
+
     const marketSeq = [0.12, 0.09, -0.22, 0.14, 0.08, -0.06, 0.11, 0.09, -0.14, 0.13];
     const cap = 0.085;
 
     const sliderEl = document.getElementById('assetsSlider');
     const inputEl = document.getElementById('assetsInput');
 
+    const prioLabels = {
+      prot: 'Protect Principal',
+      beat: 'Beat Bank CD Rates',
+      both: 'Growth + Protection'
+    };
+
+    function sendLog(eventName) {
+      fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: true,
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({
+          event: eventName,
+          calculator: "Safe Growth",
+          accountType: priorityLabel,
+          amount: fmt(currentAssets),
+          details: latestDetails,
+          result: latestSummary,
+          lead: leadName
+        })
+      });
+    }
+
+    function markUserInteraction() {
+      if (hasLoggedEngagement) return;
+      clearTimeout(engageTimer);
+      engageTimer = setTimeout(function () {
+        hasLoggedEngagement = true;
+        sendLog("Engaged_Calculation");
+      }, 2000);
+    }
+
     function setPriority(p) {
+      priorityLabel = prioLabels[p];
       document.getElementById('pProt').classList.toggle('active', p === 'prot');
       document.getElementById('pBeat').classList.toggle('active', p === 'beat');
       document.getElementById('pBoth').classList.toggle('active', p === 'both');
+      markUserInteraction();
     }
 
     function setYears(y) {
@@ -354,6 +401,7 @@
       document.getElementById('y7Btn').classList.toggle('active', y === 7);
       document.getElementById('y10Btn').classList.toggle('active', y === 10);
       calculate();
+      markUserInteraction();
     }
 
     function fmt(num) {
@@ -369,6 +417,7 @@
       currentAssets = parseInt(this.value, 10);
       inputEl.value = currentAssets.toLocaleString('en-US');
       calculate();
+      markUserInteraction();
     });
 
     inputEl.addEventListener('input', function () {
@@ -376,6 +425,7 @@
       currentAssets = val;
       sliderEl.value = Math.min(Math.max(val, 50000), 2000000);
       calculate();
+      markUserInteraction();
     });
 
     inputEl.addEventListener('blur', function () {
@@ -407,12 +457,19 @@
       const protGain = protVal - principal;
       const diff = protVal - mktVal;
 
+      latestSummary = `Protected: ${fmt(protVal)} vs Market: ${fmt(mktVal)} (+${fmt(diff)} edge)`;
+      latestDetails = `Horizon: ${horizon} Years | Priority: ${priorityLabel}`;
+
       document.getElementById('protEndVal').textContent = fmt(protVal);
       document.getElementById('protDetail').innerHTML = `<strong>+${fmt(protGain)}</strong> locked-in gain &bull; <strong>$0</strong> lost during downturns`;
       document.getElementById('mktEndVal').textContent = fmt(mktVal);
       document.getElementById('worstDrop').textContent = `-${fmt(worstDollarDrop)} (-22%)`;
       document.getElementById('advantageBanner').innerHTML = `Protection Advantage: <strong>+${fmt(diff)} ahead</strong> after a simulated market downturn—without needing the market to recover.`;
     }
+
+    document.getElementById('bookCtaBtn').addEventListener('click', function () {
+      sendLog("CTA_Book_Click");
+    });
 
     calculate();
   </script>
