@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Retirement Income &amp; Principal Protection Hub</title>
+  <title>Jerry Roman | Retirement Income &amp; Principal Protection Hub</title>
   <style>
     :root {
       --navy: #0f2537;
@@ -26,12 +26,12 @@
     header {
       background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
       color: #ffffff;
-      padding: 48px 20px 56px;
+      padding: 46px 20px 62px;
       text-align: center;
     }
     .badge {
       display: inline-block;
-      background: rgba(197, 155, 39, 0.2);
+      background: rgba(197, 155, 39, 0.18);
       border: 1px solid var(--gold);
       color: #f3d478;
       font-size: 12px;
@@ -43,33 +43,41 @@
       margin-bottom: 16px;
     }
     header h1 {
-      font-size: clamp(26px, 4vw, 38px);
+      font-size: clamp(25px, 4vw, 37px);
       font-weight: 700;
-      max-width: 720px;
+      max-width: 760px;
       margin: 0 auto 14px;
-      line-height: 1.2;
+      line-height: 1.22;
     }
     header p {
       font-size: 16px;
       color: #cbd5e1;
-      max-width: 600px;
-      margin: 0 auto;
+      max-width: 630px;
+      margin: 0 auto 16px;
+    }
+    .peer-strip {
+      display: inline-block;
+      font-size: 13px;
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 8px;
     }
     .container {
-      max-width: 960px;
-      margin: -28px auto 60px;
+      max-width: 1020px;
+      margin: -34px auto 60px;
       padding: 0 20px;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
       gap: 22px;
     }
     .card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 28px 24px;
+      padding: 26px 24px;
       box-shadow: 0 10px 25px rgba(15, 37, 55, 0.06);
       display: flex;
       flex-direction: column;
@@ -81,12 +89,22 @@
       box-shadow: 0 14px 30px rgba(15, 37, 55, 0.1);
     }
     .card-tag {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--gold);
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+    }
+    .who-for {
+      display: inline-block;
+      font-size: 12px;
+      color: var(--navy);
+      background: #eef4f8;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      margin-bottom: 12px;
     }
     .card h2 {
       font-size: 20px;
@@ -96,7 +114,7 @@
     .card p {
       font-size: 14.5px;
       color: var(--muted);
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
     .btn {
       display: inline-block;
@@ -105,31 +123,54 @@
       color: #ffffff;
       text-decoration: none;
       font-weight: 600;
-      font-size: 15px;
+      font-size: 14.5px;
       padding: 13px 18px;
       border-radius: 8px;
       transition: background 0.15s ease;
     }
     .btn:hover { background: var(--navy-light); }
-    .advisor-box {
-      margin-top: 36px;
+    .nepq-panel {
+      margin-top: 34px;
       background: var(--card);
       border: 1px solid var(--border);
-      border-left: 5px solid var(--gold);
-      border-radius: 10px;
-      padding: 24px;
+      border-radius: 12px;
+      padding: 28px 24px;
+    }
+    .nepq-panel h3 {
+      font-size: 18px;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .nepq-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .nepq-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .nepq-list li {
+      background: #f8fafc;
+      border-left: 3px solid var(--gold);
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-size: 13.5px;
+      color: var(--text);
+    }
+    .cta-row {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
     }
-    .advisor-box h3 {
-      font-size: 18px;
-      color: var(--navy);
-      margin-bottom: 4px;
-    }
-    .advisor-box p {
+    .cta-row p {
       font-size: 14px;
       color: var(--muted);
       max-width: 580px;
@@ -140,7 +181,7 @@
       text-decoration: none;
       font-weight: 700;
       font-size: 14.5px;
-      padding: 13px 22px;
+      padding: 14px 22px;
       border-radius: 8px;
       white-space: nowrap;
     }
@@ -158,46 +199,66 @@
 <body>
   <header>
     <div class="badge">Jerry Roman &bull; Retirement Income &amp; Protection</div>
-    <h1>Interactive Retirement Income &amp; Principal Protection Tools</h1>
-    <p>Select your primary retirement objective below to model realistic monthly income ranges and downside protection in under 60 seconds.</p>
+    <h1>What Happens to Your Retirement Paycheck If the Market Drops 20% Next Year?</h1>
+    <p>Before making any decisions about your savings, run your exact numbers below to see what predictable income and principal protection actually look like on paper.</p>
+    <div class="peer-strip">Built for retirees and pre-retirees aged 55–80 comparing fixed-income options</div>
   </header>
 
   <main class="container">
     <div class="grid">
       <div class="card">
         <div>
-          <div class="card-tag">Goal 1 &bull; Immediate Cash Flow</div>
+          <div class="card-tag">Option 1 &bull; Immediate Cash Flow</div>
+          <div class="who-for">Most used by retirees within 12 months of stepping back</div>
           <h2>Retirement Paycheck Estimator</h2>
-          <p>See how much monthly lifetime income your current nest egg can generate starting within 30 to 90 days—without market volatility.</p>
+          <p>See how much monthly lifetime income your current nest egg could generate starting within 30 to 90 days—compared side-by-side against the traditional 4% withdrawal rule.</p>
         </div>
-        <a href="/income-now.html" class="btn">Launch Paycheck Estimator &rarr;</a>
+        <a href="/income-now.html" class="btn">Run My Paycheck Numbers &rarr;</a>
       </div>
 
       <div class="card">
         <div>
-          <div class="card-tag">Goal 2 &bull; 2–10 Year Horizon</div>
+          <div class="card-tag">Option 2 &bull; 2–10 Year Horizon</div>
+          <div class="who-for">Built for pre-retirees aged 55–70 planning ahead</div>
           <h2>Income Deferral Multiplier</h2>
-          <p>Model how delaying income for a few years compounds your future income base and increases your lifetime payout rate.</p>
+          <p>Model how waiting a few years before turning on income compounds your guaranteed income base—even if the stock market experiences a downturn in the meantime.</p>
         </div>
-        <a href="/future-income.html" class="btn">Launch Deferral Calculator &rarr;</a>
+        <a href="/future-income.html" class="btn">See My Future Payout Increase &rarr;</a>
       </div>
 
       <div class="card">
         <div>
-          <div class="card-tag">Goal 3 &bull; Capital Preservation</div>
-          <h2>Zero-Loss Safe Growth Simulator</h2>
-          <p>Compare traditional market exposure against an indexed principal-protected strategy that locks in gains with a 0% floor in down years.</p>
+          <div class="card-tag">Option 3 &bull; Capital Preservation</div>
+          <div class="who-for">Designed for savers who cannot afford a major drawdown</div>
+          <h2>Principal-Protected Growth Simulator</h2>
+          <p>Compare an unprotected market portfolio during a downturn against an annual-reset strategy that locks in credited gains with a 0% floor in down years.</p>
         </div>
-        <a href="/safe-growth.html" class="btn">Launch Safe Growth Tool &rarr;</a>
+        <a href="/safe-growth.html" class="btn">Compare Protected vs. Market &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-tag">Option 4 &bull; Tax-Smart Compounding</div>
+          <div class="who-for">Ideal for CD, money market &amp; non-qualified savers</div>
+          <h2>Tax-Deferred Compounding Estimator</h2>
+          <p>See how much annual 1099 taxes quietly erode CD and high-yield savings returns compared to letting your balance compound tax-deferred until you draw it.</p>
+        </div>
+        <a href="/tax-shield.html" class="btn">Calculate My Tax-Drag Savings &rarr;</a>
       </div>
     </div>
 
-    <div class="advisor-box">
-      <div>
-        <h3>Want Carrier-Specific Quotes for Your State?</h3>
-        <p>Every carrier prices age, joint-life options, and state rules differently. Book a quick 15-minute discovery call to compare top-rated carriers tailored to your numbers.</p>
+    <div class="nepq-panel">
+      <h3>Three Questions Worth Asking Before You Decide Anything</h3>
+      <p class="nepq-sub">Calculators give you realistic ranges, while actual carrier payouts vary by state, age, and policy structure.</p>
+      <ul class="nepq-list">
+        <li><strong>1. Risk Comfort:</strong> If the market repeated a 2008- or 2022-style drop next year, how much of your current savings would you feel comfortable losing?</li>
+        <li><strong>2. Recovery Timeline:</strong> If that drop happened right as you needed income, how many years would it push back your retirement plans?</li>
+        <li><strong>3. Clarity on Paper:</strong> Would it be helpful to see live carrier quotes for your exact age and state side-by-side—with zero pressure to move anything?</li>
+      </ul>
+      <div class="cta-row">
+        <p><strong>What happens on a 15-minute discovery call:</strong> We pull live illustrations from top A-rated carriers for your state so you can compare your exact numbers side-by-side.</p>
+        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="btn-gold">Compare Live Carrier Numbers for My State &rarr;</a>
       </div>
-      <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="btn-gold">Schedule 15-Min Discovery Call</a>
     </div>
   </main>
 
