@@ -1,1 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retirement Income &amp; Principal Protection Hub</title>
+  <style>
+    :root {
+      --navy: #0f2537;
+      --navy-light: #1a3a54;
+      --gold: #c59b27;
+      --gold-hover: #b0881e;
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      color: #ffffff;
+      padding: 48px 20px 56px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(197, 155, 39, 0.2);
+      border: 1px solid var(--gold);
+      color: #f3d478;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    header h1 {
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 700;
+      max-width: 720px;
+      margin: 0 auto 14px;
+      line-height: 1.2;
+    }
+    header p {
+      font-size: 16px;
+      color: #cbd5e1;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .container {
+      max-width: 960px;
+      margin: -28px auto 60px;
+      padding: 0 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 22px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 24px;
+      box-shadow: 0 10px 25px rgba(15, 37, 55, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(15, 37, 55, 0.1);
+    }
+    .card-tag {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .card h2 {
+      font-size: 20px;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .card p {
+      font-size: 14.5px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .btn {
+      display: inline-block;
+      text-align: center;
+      background: var(--navy);
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 13px 18px;
+      border-radius: 8px;
+      transition: background 0.15s ease;
+    }
+    .btn:hover { background: var(--navy-light); }
+    .advisor-box {
+      margin-top: 36px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--gold);
+      border-radius: 10px;
+      padding: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .advisor-box h3 {
+      font-size: 18px;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .advisor-box p {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 580px;
+    }
+    .btn-gold {
+      background: var(--gold);
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14.5px;
+      padding: 13px 22px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .btn-gold:hover { background: var(--gold-hover); }
+    footer {
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--muted);
+      padding: 0 20px 40px;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">Jerry Roman &bull; Retirement Income &amp; Protection</div>
+    <h1>Interactive Retirement Income &amp; Principal Protection Tools</h1>
+    <p>Select your primary retirement objective below to model realistic monthly income ranges and downside protection in under 60 seconds.</p>
+  </header>
 
+  <main class="container">
+    <div class="grid">
+      <div class="card">
+        <div>
+          <div class="card-tag">Goal 1 &bull; Immediate Cash Flow</div>
+          <h2>Retirement Paycheck Estimator</h2>
+          <p>See how much monthly lifetime income your current nest egg can generate starting within 30 to 90 days—without market volatility.</p>
+        </div>
+        <a href="/income-now.html" class="btn">Launch Paycheck Estimator &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-tag">Goal 2 &bull; 2–10 Year Horizon</div>
+          <h2>Income Deferral Multiplier</h2>
+          <p>Model how delaying income for a few years compounds your future income base and increases your lifetime payout rate.</p>
+        </div>
+        <a href="/future-income.html" class="btn">Launch Deferral Calculator &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-tag">Goal 3 &bull; Capital Preservation</div>
+          <h2>Zero-Loss Safe Growth Simulator</h2>
+          <p>Compare traditional market exposure against an indexed principal-protected strategy that locks in gains with a 0% floor in down years.</p>
+        </div>
+        <a href="/safe-growth.html" class="btn">Launch Safe Growth Tool &rarr;</a>
+      </div>
+    </div>
+
+    <div class="advisor-box">
+      <div>
+        <h3>Want Carrier-Specific Quotes for Your State?</h3>
+        <p>Every carrier prices age, joint-life options, and state rules differently. Book a quick 15-minute discovery call to compare top-rated carriers tailored to your numbers.</p>
+      </div>
+      <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="btn-gold">Schedule 15-Min Discovery Call</a>
+    </div>
+  </main>
+
+  <footer>
+    Calculations are illustrative estimates based on representative fixed and fixed-indexed annuity payout structures and are not a contract or guarantee of future rates. Actual carrier payouts depend on age, state of residence, and policy selection.
+  </footer>
+</body>
+</html>
