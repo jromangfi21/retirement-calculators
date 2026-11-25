@@ -213,7 +213,7 @@
           <h2>Retirement Paycheck Estimator</h2>
           <p>See how much monthly lifetime income your current nest egg could generate starting within 30 to 90 days—compared side-by-side against the traditional 4% withdrawal rule.</p>
         </div>
-        <a href="/income-now.html" class="btn">Run My Paycheck Numbers &rarr;</a>
+        <a href="/income-now.html" class="btn tool-link">Run My Paycheck Numbers &rarr;</a>
       </div>
 
       <div class="card">
@@ -221,19 +221,19 @@
           <div class="card-tag">Option 2 &bull; 2–10 Year Horizon</div>
           <div class="who-for">Built for pre-retirees aged 55–70 planning ahead</div>
           <h2>Income Deferral Multiplier</h2>
-          <p>Model how waiting a few years before turning on income compounds your guaranteed income base—even if the stock market experiences a downturn in the meantime.</p>
+          <p>Model how waiting a few years before turning on income compounds your income base—even if the stock market experiences a downturn in the meantime.</p>
         </div>
-        <a href="/future-income.html" class="btn">See My Future Payout Increase &rarr;</a>
+        <a href="/future-income.html" class="btn tool-link">See My Future Payout Increase &rarr;</a>
       </div>
 
       <div class="card">
         <div>
           <div class="card-tag">Option 3 &bull; Capital Preservation</div>
-          <div class="who-for">Designed for savers who cannot afford a major drawdown</div>
+          <div class="who-for">Designed for savers who want downside principal protection</div>
           <h2>Principal-Protected Growth Simulator</h2>
           <p>Compare an unprotected market portfolio during a downturn against an annual-reset strategy that locks in credited gains with a 0% floor in down years.</p>
         </div>
-        <a href="/safe-growth.html" class="btn">Compare Protected vs. Market &rarr;</a>
+        <a href="/safe-growth.html" class="btn tool-link">Compare Protected vs. Market &rarr;</a>
       </div>
 
       <div class="card">
@@ -243,8 +243,9 @@
           <h2>Roth Conversion &amp; RMD Tax Simulator</h2>
           <p>Compare leaving your 401(k) or IRA exposed to future RMD tax brackets versus converting strategically into tax-free Roth protection.</p>
         </div>
-        <a href="/tax-shield.html" class="btn">Simulate My Roth Conversion &rarr;</a>
+        <a href="/tax-shield.html" class="btn tool-link">Simulate My Roth Conversion &rarr;</a>
       </div>
+    </div>
 
     <div class="nepq-panel">
       <h3>Three Questions Worth Asking Before You Decide Anything</h3>
@@ -256,7 +257,7 @@
       </ul>
       <div class="cta-row">
         <p><strong>What happens on a 15-minute discovery call:</strong> We pull live illustrations from top A-rated carriers for your state so you can compare your exact numbers side-by-side.</p>
-        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="btn-gold">Compare Live Carrier Numbers for My State &rarr;</a>
+        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="btn-gold" id="hubBookBtn">Compare Live Carrier Numbers for My State &rarr;</a>
       </div>
     </div>
   </main>
@@ -264,5 +265,35 @@
   <footer>
     Calculations are illustrative estimates based on representative fixed and fixed-indexed annuity payout structures and are not a contract or guarantee of future rates. Actual carrier payouts depend on age, state of residence, and policy selection.
   </footer>
+
+  <script>
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxlDtzR-0IH841BA84JSsCgSUU87NRTk8FLvlRkC9t0VhlYYhhhATAUqkj_mIEl72Kv/exec";
+    const params = new URLSearchParams(window.location.search);
+    const leadParam = params.get("lead") || "";
+
+    if (leadParam) {
+      document.querySelectorAll(".tool-link").forEach(function (link) {
+        link.href = link.getAttribute("href") + "?lead=" + encodeURIComponent(leadParam);
+      });
+    }
+
+    document.getElementById("hubBookBtn").addEventListener("click", function () {
+      fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: true,
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({
+          event: "CTA_Book_Click",
+          calculator: "Hub Page",
+          accountType: "N/A",
+          amount: "N/A",
+          details: "Booked directly from Hub",
+          result: "N/A",
+          lead: leadParam || "Anonymous"
+        })
+      });
+    });
+  </script>
 </body>
 </html>
