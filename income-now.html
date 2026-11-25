@@ -253,7 +253,7 @@
 </head>
 <body>
   <div class="topbar">
-    <a href="/">&larr; All Retirement Tools</a>
+    <a href="/" id="backLink">&larr; All Retirement Tools</a>
     <span>Jerry Roman</span>
   </div>
 
@@ -311,7 +311,7 @@
         <div class="res-label">Estimated Monthly Lifetime Paycheck</div>
         <div class="res-amount" id="monthlyOut">$1,925 – $2,150 / mo</div>
         <div class="res-sub" id="annualOut">$23,100 – $25,800 per year for life &bull; Protected from market downturns</div>
-        <div class="account-note" id="sourceContext">401(k)/IRA Note: Can be repositioned via direct tax-free rollover with zero IRS penalty.</div>
+        <div class="account-note" id="sourceContext">401(k)/IRA Note: Can typically be repositioned via direct tax-free rollover with no withholding.</div>
 
         <div class="compare-row">
           <div class="compare-item">
@@ -324,7 +324,7 @@
           </div>
           <div class="compare-item">
             <span>Annual Income Gap</span>
-            <strong id="liftOut" style="color: #b91c1c;">-$9,100 / yr left on table</strong>
+            <strong id="liftOut" style="color: #b91c1c;">-$9,100 / yr with 4% rule</strong>
           </div>
         </div>
       </div>
@@ -340,7 +340,7 @@
 
       <div class="cta-section">
         <p class="expectation-note">On a brief 15-minute discovery call, we will pull live payouts from top A-rated carriers in your state so you can compare them side-by-side.</p>
-        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn">See My Exact State Carrier Quotes &rarr;</a>
+        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn" id="bookCtaBtn">See My Exact State Carrier Quotes &rarr;</a>
         <div class="cta-note">15-minute review &bull; No obligation and no pressure to move anything</div>
       </div>
     </div>
@@ -351,23 +351,70 @@
   </footer>
 
   <script>
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxlDtzR-0IH841BA84JSsCgSUU87NRTk8FLvlRkC9t0VhlYYhhhATAUqkj_mIEl72Kv/exec";
+    const leadName = new URLSearchParams(window.location.search).get("lead") || "Anonymous";
+    if (leadName !== "Anonymous") {
+      document.getElementById("backLink").href = "/?lead=" + encodeURIComponent(leadName);
+    }
+
     let coverage = 'single';
+    let accountType = '401(k) / IRA';
     let currentAssets = 350000;
+    let latestSummary = '';
+    let latestDetails = '';
+    let hasLoggedEngagement = false;
+    let engageTimer = null;
 
     const sliderEl = document.getElementById('assetsSlider');
     const inputEl = document.getElementById('assetsInput');
 
     const sourceMessages = {
-      ira: '401(k)/IRA Note: Can be repositioned via direct tax-free rollover with zero withholding.',
+      ira: '401(k)/IRA Note: Can typically be repositioned via direct tax-free rollover with no withholding.',
       cd: 'CD/Cash Note: Typically yields higher lifetime cash flow than renewing short-term bank CDs.',
-      brok: 'Brokerage Note: Non-qualified funds receive favorable exclusion-ratio tax treatment on payouts.'
+      brok: 'Brokerage Note: Non-qualified funds often receive favorable exclusion-ratio tax treatment on payouts.'
     };
 
+    const sourceLabels = {
+      ira: '401(k) / IRA',
+      cd: 'Bank CD / Cash',
+      brok: 'Brokerage'
+    };
+
+    function sendLog(eventName) {
+      fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: true,
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({
+          event: eventName,
+          calculator: "Immediate Income",
+          accountType: accountType,
+          amount: fmt(currentAssets),
+          details: latestDetails,
+          result: latestSummary,
+          lead: leadName
+        })
+      });
+    }
+
+    function markUserInteraction() {
+      if (hasLoggedEngagement) return;
+      clearTimeout(engageTimer);
+      engageTimer = setTimeout(function () {
+        hasLoggedEngagement = true;
+        sendLog("Engaged_Calculation");
+      }, 2000);
+    }
+
     function setSource(src) {
+      accountType = sourceLabels[src];
       document.getElementById('srcIra').classList.toggle('active', src === 'ira');
       document.getElementById('srcCd').classList.toggle('active', src === 'cd');
       document.getElementById('srcBrok').classList.toggle('active', src === 'brok');
       document.getElementById('sourceContext').textContent = sourceMessages[src];
+      calculate();
+      markUserInteraction();
     }
 
     function setCoverage(type) {
@@ -375,6 +422,7 @@
       document.getElementById('singleBtn').classList.toggle('active', type === 'single');
       document.getElementById('jointBtn').classList.toggle('active', type === 'joint');
       calculate();
+      markUserInteraction();
     }
 
     function fmt(num) {
@@ -390,6 +438,7 @@
       currentAssets = parseInt(this.value, 10);
       inputEl.value = currentAssets.toLocaleString('en-US');
       calculate();
+      markUserInteraction();
     });
 
     inputEl.addEventListener('input', function () {
@@ -397,6 +446,7 @@
       currentAssets = val;
       sliderEl.value = Math.min(Math.max(val, 50000), 2000000);
       calculate();
+      markUserInteraction();
     });
 
     inputEl.addEventListener('blur', function () {
@@ -423,14 +473,25 @@
       const fourPctMonthly = (assets * 0.04) / 12;
       const annualGap = (lowMonthly - fourPctMonthly) * 12;
 
-      document.getElementById('monthlyOut').textContent = `${fmt(lowMonthly)} – ${fmt(highMonthly)} / mo`;
+      latestSummary = `${fmt(lowMonthly)} – ${fmt(highMonthly)} / mo`;
+      latestDetails = `Age: ${age} | Coverage: ${coverage === 'joint' ? 'Joint Life' : 'Single Life'}`;
+
+      document.getElementById('monthlyOut').textContent = latestSummary;
       document.getElementById('annualOut').textContent = `${fmt(lowMonthly * 12)} – ${fmt(highMonthly * 12)} per year for life • Protected from market downturns`;
       document.getElementById('rateOut').textContent = `${(lowRate * 100).toFixed(1)}% – ${(highRate * 100).toFixed(1)}%`;
       document.getElementById('fourPctOut').textContent = `${fmt(fourPctMonthly)} / mo`;
       document.getElementById('liftOut').textContent = `-${fmt(annualGap)} / yr with 4% rule`;
     }
 
-    document.getElementById('age').addEventListener('input', calculate);
+    document.getElementById('age').addEventListener('input', function () {
+      calculate();
+      markUserInteraction();
+    });
+
+    document.getElementById('bookCtaBtn').addEventListener('click', function () {
+      sendLog("CTA_Book_Click");
+    });
+
     calculate();
   </script>
 </body>
