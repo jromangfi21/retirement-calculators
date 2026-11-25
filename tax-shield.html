@@ -248,7 +248,7 @@
 </head>
 <body>
   <div class="topbar">
-    <a href="/">&larr; All Retirement Tools</a>
+    <a href="/" id="backLink">&larr; All Retirement Tools</a>
     <span>Jerry Roman</span>
   </div>
 
@@ -325,7 +325,7 @@
       </div>
 
       <div class="shield-banner" id="advantageBanner">
-        Net Lifetime Tax Savings: <strong>+$95,875 more</strong> kept in your family's pocket—with zero RMD brackets or Medicare IRMAA surprises.
+        Net Lifetime Tax Savings: <strong>+$95,875 more</strong> kept in your family's pocket—with no RMD brackets or Medicare IRMAA surprises.
       </div>
 
       <div class="nepq-box">
@@ -339,7 +339,7 @@
 
       <div class="cta-section">
         <p class="expectation-note">On a brief 15-minute discovery call, we will review how a principal-protected Roth conversion strategy fits your timeline—alongside your CPA's tax brackets.</p>
-        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn">Map Out My Roth Conversion Strategy &rarr;</a>
+        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn" id="bookCtaBtn">Map Out My Roth Conversion Strategy &rarr;</a>
         <div class="cta-note">Educational modeling &bull; Coordinate final conversion amounts with your CPA</div>
       </div>
     </div>
@@ -350,14 +350,61 @@
   </footer>
 
   <script>
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxlDtzR-0IH841BA84JSsCgSUU87NRTk8FLvlRkC9t0VhlYYhhhATAUqkj_mIEl72Kv/exec";
+    const leadName = new URLSearchParams(window.location.search).get("lead") || "Anonymous";
+    if (leadName !== "Anonymous") {
+      document.getElementById("backLink").href = "/?lead=" + encodeURIComponent(leadName);
+    }
+
     let currentAssets = 500000;
+    let accountType = 'Traditional IRA';
+    let latestSummary = '';
+    let latestDetails = '';
+    let hasLoggedEngagement = false;
+    let engageTimer = null;
+
     const sliderEl = document.getElementById('assetsSlider');
     const inputEl = document.getElementById('assetsInput');
 
+    const acctLabels = {
+      ira: 'Traditional IRA',
+      '401k': '401(k) / 403(b)',
+      both: 'Multiple Accounts'
+    };
+
+    function sendLog(eventName) {
+      fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: true,
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({
+          event: eventName,
+          calculator: "Roth Conversion",
+          accountType: accountType,
+          amount: fmt(currentAssets),
+          details: latestDetails,
+          result: latestSummary,
+          lead: leadName
+        })
+      });
+    }
+
+    function markUserInteraction() {
+      if (hasLoggedEngagement) return;
+      clearTimeout(engageTimer);
+      engageTimer = setTimeout(function () {
+        hasLoggedEngagement = true;
+        sendLog("Engaged_Calculation");
+      }, 2000);
+    }
+
     function setAcct(a) {
+      accountType = acctLabels[a];
       document.getElementById('rIra').classList.toggle('active', a === 'ira');
       document.getElementById('r401k').classList.toggle('active', a === '401k');
       document.getElementById('rBoth').classList.toggle('active', a === 'both');
+      markUserInteraction();
     }
 
     function fmt(num) {
@@ -373,6 +420,7 @@
       currentAssets = parseInt(this.value, 10);
       inputEl.value = currentAssets.toLocaleString('en-US');
       calculate();
+      markUserInteraction();
     });
 
     inputEl.addEventListener('input', function () {
@@ -380,6 +428,7 @@
       currentAssets = val;
       sliderEl.value = Math.min(Math.max(val, 100000), 3000000);
       calculate();
+      markUserInteraction();
     });
 
     inputEl.addEventListener('blur', function () {
@@ -402,16 +451,17 @@
 
       const factor = Math.pow(1 + growth, years);
 
-      // Path A: Convert upfront (paying nowRate tax), remainder grows 100% tax-free
       const upfrontTax = principal * nowRate;
       const rothNetEnd = (principal - upfrontTax) * factor;
 
-      // Path B: Leave in Traditional IRA, entire grown balance taxed at futureRate
       const tradGrossEnd = principal * factor;
       const futureTaxBill = tradGrossEnd * futureRate;
       const tradNetEnd = tradGrossEnd - futureTaxBill;
 
       const netAdvantage = rothNetEnd - tradNetEnd;
+
+      latestSummary = `Roth Net: ${fmt(rothNetEnd)} vs Trad Net: ${fmt(tradNetEnd)} (Diff: ${fmt(netAdvantage)})`;
+      latestDetails = `Now Tax: ${Math.round(nowRate * 100)}% | Future Tax: ${Math.round(futureRate * 100)}% | ${years} Yrs`;
 
       document.getElementById('rothNetVal').textContent = fmt(rothNetEnd);
       document.getElementById('convTaxPaid').textContent = fmt(upfrontTax);
@@ -419,15 +469,29 @@
       document.getElementById('futureIrsBill').textContent = `-${fmt(futureTaxBill)}`;
 
       if (netAdvantage >= 0) {
-        document.getElementById('advantageBanner').innerHTML = `Net Lifetime Tax Savings: <strong>+${fmt(netAdvantage)} more</strong> kept in your family's pocket—with zero RMD brackets or Medicare IRMAA surprises.`;
+        document.getElementById('advantageBanner').innerHTML = `Net Lifetime Tax Savings: <strong>+${fmt(netAdvantage)} more</strong> kept in your family's pocket—with no RMD brackets or Medicare IRMAA surprises.`;
       } else {
         document.getElementById('advantageBanner').innerHTML = `Note: When future tax brackets are lower than today's rate, partial bracket-filling conversions typically work better than converting everything at once.`;
       }
     }
 
-    document.getElementById('nowTax').addEventListener('input', calculate);
-    document.getElementById('futureTax').addEventListener('input', calculate);
-    document.getElementById('years').addEventListener('input', calculate);
+    document.getElementById('nowTax').addEventListener('input', function () {
+      calculate();
+      markUserInteraction();
+    });
+    document.getElementById('futureTax').addEventListener('input', function () {
+      calculate();
+      markUserInteraction();
+    });
+    document.getElementById('years').addEventListener('input', function () {
+      calculate();
+      markUserInteraction();
+    });
+
+    document.getElementById('bookCtaBtn').addEventListener('click', function () {
+      sendLog("CTA_Book_Click");
+    });
+
     calculate();
   </script>
 </body>
