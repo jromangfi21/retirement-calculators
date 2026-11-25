@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tax-Deferred Growth Calculator | Reduce Retirement Tax Drag</title>
+  <style>
+    :root {
+      --navy: #0f2537;
+      --navy-light: #1a3a54;
+      --gold: #c59b27;
+      --gold-hover: #b0881e;
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --green: #15803d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .topbar {
+      background: var(--navy);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+    .topbar a { color: #f3d478; text-decoration: none; font-weight: 600; }
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      color: #fff;
+      padding: 36px 20px 56px;
+      text-align: center;
+    }
+    .hero h1 { font-size: clamp(24px, 4vw, 34px); margin-bottom: 10px; }
+    .hero p { color: #cbd5e1; max-width: 600px; margin: 0 auto; font-size: 15.5px; }
+    .wrap {
+      max-width: 820px;
+      margin: -32px auto 60px;
+      padding: 0 16px;
+    }
+    .calc-card {
+      background: var(--card);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 30px rgba(15, 37, 55, 0.08);
+      padding: 28px 24px;
+    }
+    .control { margin-bottom: 24px; }
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .control label { font-weight: 600; font-size: 15px; color: var(--navy); }
+    .val-display { font-size: 20px; font-weight: 700; color: var(--gold); }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--navy);
+      height: 6px;
+      cursor: pointer;
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .res-card {
+      border-radius: 12px;
+      padding: 20px;
+      border: 1.5px solid var(--border);
+      background: #f8fafc;
+    }
+    .res-card.protected {
+      border-color: var(--green);
+      background: #f0fdf4;
+    }
+    .res-card h3 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .res-card.protected h3 { color: var(--green); }
+    .big-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .res-card.protected .big-num { color: var(--green); }
+    .res-detail { font-size: 13px; color: var(--muted); }
+    .shield-banner {
+      margin-top: 18px;
+      background: #eef4f8;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: var(--navy);
+      text-align: center;
+      font-weight: 500;
+    }
+    .cta-section {
+      margin-top: 26px;
+      text-align: center;
+    }
+    .cta-btn {
+      display: inline-block;
+      width: 100%;
+      max-width: 440px;
+      background: var(--gold);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16.5px;
+      padding: 16px 24px;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(197, 155, 39, 0.35);
+    }
+    .cta-btn:hover { background: var(--gold-hover); }
+    .cta-note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 720px;
+      margin: 0 auto 40px;
+      padding: 0 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="/">&larr; All Retirement Tools</a>
+    <span>Jerry Roman</span>
+  </div>
+
+  <div class="hero">
+    <h1>Tax-Deferred Compounding Estimator</h1>
+    <p>Compare keeping non-qualified savings in an annually taxed CD/money market versus compounding tax-deferred with zero annual 1099 tax drag.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="calc-card">
+      <div class="control">
+        <div class="control-header">
+          <label for="assets">Non-Qualified Savings Amount</label>
+          <span class="val-display" id="assetsVal">$500,000</span>
+        </div>
+        <input type="range" id="assets" min="100000" max="3000000" value="500000" step="50000" />
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label for="taxRate">Combined Federal + State Tax Bracket</label>
+          <span class="val-display" id="taxVal">28%</span>
+        </div>
+        <input type="range" id="taxRate" min="15" max="42" value="28" step="1" />
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label for="years">Deferral Horizon</label>
+          <span class="val-display" id="yearsVal">10 Years</span>
+        </div>
+        <input type="range" id="years" min="3" max="15" value="10" step="1" />
+      </div>
+
+      <div class="results-grid">
+        <div class="res-card protected">
+          <h3>Tax-Deferred Account Value</h3>
+          <div class="big-num" id="defVal">$895,424</div>
+          <div class="res-detail" id="defDetail">Compounds at full <strong>6.0%</strong> rate with $0 annual 1099 tax drag</div>
+        </div>
+
+        <div class="res-card">
+          <h3>Annually Taxed Account (CD / HYSA)</h3>
+          <div class="big-num" id="taxedVal">$763,560</div>
+          <div class="res-detail" id="taxedDetail">Effective after-tax yield drops to <strong id="netYield">4.32%</strong>/yr</div>
+        </div>
+      </div>
+
+      <div class="shield-banner" id="advantageBanner">
+        Tax-Deferral Advantage: <strong>+$131,864 more</strong> compounding in your account over 10 years—and you control when withdrawals are taxed.
+      </div>
+
+      <div class="cta-section">
+        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn">Book 15-Min Tax-Smart Strategy Call &rarr;</a>
+        <div class="cta-note">Educational illustration &bull; Consult your CPA regarding personal tax filings</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Illustrative comparison assuming an identical 6.0% gross annual yield in both accounts. Tax-deferred annuities defer ordinary income tax until withdrawal; withdrawals of gain are taxed as ordinary income (and may incur a 10% IRS penalty prior to age 59½). Not tax or legal advice.
+  </footer>
+
+  <script>
+    function fmt(num) {
+      return '$' + Math.round(num).toLocaleString('en-US');
+    }
+
+    function calculate() {
+      const principal = parseInt(document.getElementById('assets').value, 10);
+      const taxPct = parseInt(document.getElementById('taxRate').value, 10) / 100;
+      const years = parseInt(document.getElementById('years').value, 10);
+      const grossRate = 0.06;
+
+      document.getElementById('assetsVal').textContent = fmt(principal);
+      document.getElementById('taxVal').textContent = `${Math.round(taxPct * 100)}%`;
+      document.getElementById('yearsVal').textContent = `${years} Years`;
+
+      const deferredEnd = principal * Math.pow(1 + grossRate, years);
+      const netRate = grossRate * (1 - taxPct);
+      const taxedEnd = principal * Math.pow(1 + netRate, years);
+      const diff = deferredEnd - taxedEnd;
+
+      document.getElementById('defVal').textContent = fmt(deferredEnd);
+      document.getElementById('taxedVal').textContent = fmt(taxedEnd);
+      document.getElementById('netYield').textContent = `${(netRate * 100).toFixed(2)}%`;
+      document.getElementById('advantageBanner').innerHTML = `Tax-Deferral Advantage: <strong>+${fmt(diff)} more</strong> compounding in your account over ${years} years—and you control when distributions are taxed.`;
+    }
+
+    document.getElementById('assets').addEventListener('input', calculate);
+    document.getElementById('taxRate').addEventListener('input', calculate);
+    document.getElementById('years').addEventListener('input', calculate);
+    calculate();
+  </script>
+</body>
+</html>
