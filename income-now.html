@@ -1,1 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retirement Paycheck Estimator | Immediate Income Calculator</title>
+  <style>
+    :root {
+      --navy: #0f2537;
+      --navy-light: #1a3a54;
+      --gold: #c59b27;
+      --gold-hover: #b0881e;
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --green: #15803d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .topbar {
+      background: var(--navy);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+    .topbar a { color: #f3d478; text-decoration: none; font-weight: 600; }
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      color: #fff;
+      padding: 36px 20px 56px;
+      text-align: center;
+    }
+    .hero h1 { font-size: clamp(24px, 4vw, 34px); margin-bottom: 10px; }
+    .hero p { color: #cbd5e1; max-width: 580px; margin: 0 auto; font-size: 15.5px; }
+    .wrap {
+      max-width: 820px;
+      margin: -32px auto 60px;
+      padding: 0 16px;
+    }
+    .calc-card {
+      background: var(--card);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 30px rgba(15, 37, 55, 0.08);
+      padding: 28px 24px;
+    }
+    .control { margin-bottom: 24px; }
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .control label { font-weight: 600; font-size: 15px; color: var(--navy); }
+    .val-display { font-size: 20px; font-weight: 700; color: var(--gold); }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--navy);
+      height: 6px;
+      cursor: pointer;
+    }
+    .toggle-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .toggle-btn {
+      padding: 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .toggle-btn.active {
+      border-color: var(--navy);
+      background: #eef4f8;
+      color: var(--navy);
+    }
+    .results-box {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 24px 20px;
+      margin-top: 28px;
+      text-align: center;
+    }
+    .res-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .res-amount {
+      font-size: clamp(32px, 5vw, 44px);
+      font-weight: 800;
+      color: var(--green);
+      margin: 6px 0;
+    }
+    .res-sub { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
+    .compare-row {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .compare-item span { display: block; font-size: 12.5px; color: var(--muted); }
+    .compare-item strong { font-size: 17px; color: var(--navy); }
+    .cta-section {
+      margin-top: 26px;
+      text-align: center;
+    }
+    .cta-btn {
+      display: inline-block;
+      width: 100%;
+      max-width: 440px;
+      background: var(--gold);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16.5px;
+      padding: 16px 24px;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(197, 155, 39, 0.35);
+    }
+    .cta-btn:hover { background: var(--gold-hover); }
+    .cta-note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 720px;
+      margin: 0 auto 40px;
+      padding: 0 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="/">&larr; All Retirement Tools</a>
+    <span>Jerry Roman</span>
+  </div>
 
+  <div class="hero">
+    <h1>Immediate Retirement Paycheck Estimator</h1>
+    <p>Estimate the monthly lifetime income your savings could generate starting within 30–90 days—for as long as you live.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="calc-card">
+      <div class="control">
+        <div class="control-header">
+          <label for="age">Your Current Age</label>
+          <span class="val-display" id="ageVal">65</span>
+        </div>
+        <input type="range" id="age" min="55" max="80" value="65" step="1" />
+      </div>
+
+      <div class="control">
+        <div class="control-header">
+          <label for="assets">Retirement Savings Allocated</label>
+          <span class="val-display" id="assetsVal">$350,000</span>
+        </div>
+        <input type="range" id="assets" min="100000" max="2000000" value="350000" step="25000" />
+      </div>
+
+      <div class="control">
+        <label>Payout Coverage Option</label>
+        <div class="toggle-group">
+          <button type="button" class="toggle-btn active" id="singleBtn" onclick="setCoverage('single')">Single Life (You Only)</button>
+          <button type="button" class="toggle-btn" id="jointBtn" onclick="setCoverage('joint')">Joint Life (You + Spouse)</button>
+        </div>
+      </div>
+
+      <div class="results-box">
+        <div class="res-label">Estimated Monthly Lifetime Paycheck</div>
+        <div class="res-amount" id="monthlyOut">$1,925 – $2,150 / mo</div>
+        <div class="res-sub" id="annualOut">$23,100 – $25,800 per year for life &bull; Protected from market downturns</div>
+
+        <div class="compare-row">
+          <div class="compare-item">
+            <span>Est. Payout Rate</span>
+            <strong id="rateOut">6.6% – 7.4%</strong>
+          </div>
+          <div class="compare-item">
+            <span>Traditional 4% Rule</span>
+            <strong id="fourPctOut">$1,167 / mo</strong>
+          </div>
+          <div class="compare-item">
+            <span>Monthly Income Lift</span>
+            <strong id="liftOut" style="color: #15803d;">+$758 / mo</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-section">
+        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn">Book 15-Min Call for Custom Carrier Quotes &rarr;</a>
+        <div class="cta-note">No obligation &bull; Top A-rated carriers compared for your state</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Illustrative estimate based on representative immediate and income-rider annuity payout factors by age and coverage election. Actual guaranteed income depends on carrier, state of residence, and issue age.
+  </footer>
+
+  <script>
+    let coverage = 'single';
+
+    function setCoverage(type) {
+      coverage = type;
+      document.getElementById('singleBtn').classList.toggle('active', type === 'single');
+      document.getElementById('jointBtn').classList.toggle('active', type === 'joint');
+      calculate();
+    }
+
+    function fmt(num) {
+      return '$' + Math.round(num).toLocaleString('en-US');
+    }
+
+    function calculate() {
+      const age = parseInt(document.getElementById('age').value, 10);
+      const assets = parseInt(document.getElementById('assets').value, 10);
+
+      document.getElementById('ageVal').textContent = age;
+      document.getElementById('assetsVal').textContent = fmt(assets);
+
+      let baseRate = 0.056 + (age - 55) * 0.0011;
+      if (coverage === 'joint') baseRate -= 0.0055;
+
+      const lowRate = baseRate;
+      const highRate = baseRate + 0.0075;
+
+      const lowMonthly = (assets * lowRate) / 12;
+      const highMonthly = (assets * highRate) / 12;
+      const fourPctMonthly = (assets * 0.04) / 12;
+      const lift = lowMonthly - fourPctMonthly;
+
+      document.getElementById('monthlyOut').textContent = `${fmt(lowMonthly)} – ${fmt(highMonthly)} / mo`;
+      document.getElementById('annualOut').textContent = `${fmt(lowMonthly * 12)} – ${fmt(highMonthly * 12)} per year for life • Protected from market downturns`;
+      document.getElementById('rateOut').textContent = `${(lowRate * 100).toFixed(1)}% – ${(highRate * 100).toFixed(1)}%`;
+      document.getElementById('fourPctOut').textContent = `${fmt(fourPctMonthly)} / mo`;
+      document.getElementById('liftOut').textContent = `+${fmt(lift)} / mo`;
+    }
+
+    document.getElementById('age').addEventListener('input', calculate);
+    document.getElementById('assets').addEventListener('input', calculate);
+    calculate();
+  </script>
+</body>
+</html>
