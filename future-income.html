@@ -16,6 +16,7 @@
       --muted: #64748b;
       --border: #e2e8f0;
       --green: #15803d;
+      --red: #b91c1c;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -37,14 +38,22 @@
     .hero {
       background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
       color: #fff;
-      padding: 36px 20px 56px;
+      padding: 36px 20px 58px;
       text-align: center;
     }
-    .hero h1 { font-size: clamp(24px, 4vw, 34px); margin-bottom: 10px; }
-    .hero p { color: #cbd5e1; max-width: 600px; margin: 0 auto; font-size: 15.5px; }
+    .hero-kicker {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #f3d478;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .hero h1 { font-size: clamp(23px, 4vw, 33px); max-width: 680px; margin: 0 auto 10px; line-height: 1.24; }
+    .hero p { color: #cbd5e1; max-width: 600px; margin: 0 auto; font-size: 15px; }
     .wrap {
       max-width: 820px;
-      margin: -32px auto 60px;
+      margin: -34px auto 60px;
       padding: 0 16px;
     }
     .calc-card {
@@ -53,6 +62,18 @@
       border: 1px solid var(--border);
       box-shadow: 0 12px 30px rgba(15, 37, 55, 0.08);
       padding: 28px 24px;
+    }
+    .step-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--navy);
+      background: #eef4f8;
+      padding: 3px 9px;
+      border-radius: 5px;
+      margin-bottom: 8px;
     }
     .control { margin-bottom: 24px; }
     .control-header {
@@ -109,6 +130,27 @@
       color: var(--muted);
       margin-top: 4px;
     }
+    .pill-group-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .toggle-btn {
+      padding: 11px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .toggle-btn.active {
+      border-color: var(--navy);
+      background: #eef4f8;
+      color: var(--navy);
+    }
     .results-box {
       background: #f8fafc;
       border: 1.5px solid #cbd5e1;
@@ -118,14 +160,14 @@
       text-align: center;
     }
     .res-label {
-      font-size: 13px;
+      font-size: 12.5px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       color: var(--muted);
       font-weight: 700;
     }
     .res-amount {
-      font-size: clamp(32px, 5vw, 44px);
+      font-size: clamp(31px, 5vw, 43px);
       font-weight: 800;
       color: var(--green);
       margin: 6px 0;
@@ -162,25 +204,49 @@
     }
     .compare-item span { display: block; font-size: 12.5px; color: var(--muted); }
     .compare-item strong { font-size: 17px; color: var(--navy); }
+    .nepq-box {
+      margin-top: 24px;
+      background: #fffdf7;
+      border: 1px solid #ead9a4;
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+    .nepq-box h3 {
+      font-size: 15px;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .nepq-box ul {
+      padding-left: 18px;
+      font-size: 13.5px;
+      color: var(--text);
+    }
+    .nepq-box li { margin-bottom: 6px; }
     .cta-section {
-      margin-top: 26px;
+      margin-top: 22px;
       text-align: center;
+    }
+    .expectation-note {
+      font-size: 13.5px;
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 auto 14px;
     }
     .cta-btn {
       display: inline-block;
       width: 100%;
-      max-width: 440px;
+      max-width: 460px;
       background: var(--gold);
       color: #fff;
       text-decoration: none;
       font-weight: 700;
-      font-size: 16.5px;
+      font-size: 16px;
       padding: 16px 24px;
       border-radius: 10px;
       box-shadow: 0 6px 18px rgba(197, 155, 39, 0.35);
     }
     .cta-btn:hover { background: var(--gold-hover); }
-    .cta-note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+    .cta-note { font-size: 12.5px; color: var(--muted); margin-top: 10px; }
     footer {
       text-align: center;
       font-size: 12px;
@@ -198,12 +264,23 @@
   </div>
 
   <div class="hero">
-    <h1>Future Income Deferral Multiplier</h1>
-    <p>See how waiting 2 to 10 years to turn on income compounds your guaranteed income base—even if the stock market drops.</p>
+    <div class="hero-kicker">Future Income Deferral Multiplier</div>
+    <h1>Could One Market Correction Delay Your Retirement Date by 3 to 5 Years?</h1>
+    <p>See how locking in a contractual income roll-up today grows your future retirement paycheck—regardless of what Wall Street does between now and retirement.</p>
   </div>
 
   <div class="wrap">
     <div class="calc-card">
+      <div class="control">
+        <div class="step-badge">Step 1 &bull; Current Plan</div>
+        <label style="display:block; margin-bottom:6px;">How is this retirement money currently positioned?</label>
+        <div class="pill-group-3">
+          <button type="button" class="toggle-btn active" id="pos401k" onclick="setPos('401k')">Active / Old 401(k)</button>
+          <button type="button" class="toggle-btn" id="posIra" onclick="setPos('ira')">Traditional / Roth IRA</button>
+          <button type="button" class="toggle-btn" id="posCash" onclick="setPos('cash')">Savings / CDs</button>
+        </div>
+      </div>
+
       <div class="control">
         <div class="control-header">
           <label for="age">Your Current Age</label>
@@ -214,7 +291,7 @@
 
       <div class="control">
         <div class="control-header">
-          <label for="assetsInput">Retirement Savings Allocated (Slide or Type Exact Amount)</label>
+          <label for="assetsInput">Savings Allocated (Slide or Type Exact Amount)</label>
           <div class="money-input-wrap">
             <span class="money-prefix">$</span>
             <input type="text" inputmode="numeric" id="assetsInput" class="money-input" value="400,000" aria-label="Exact retirement savings amount" />
@@ -230,7 +307,7 @@
 
       <div class="control">
         <div class="control-header">
-          <label for="years">Years Until Income Starts</label>
+          <label for="years">Years Until You Want Paychecks to Start</label>
           <span class="val-display" id="yearsVal">5 Years (Age 65)</span>
         </div>
         <input type="range" id="years" min="1" max="10" value="5" step="1" />
@@ -239,7 +316,7 @@
       <div class="results-box">
         <div class="res-label" id="resHeading">Projected Monthly Lifetime Income at Age 65</div>
         <div class="res-amount" id="futureMonthlyOut">$2,980 – $3,340 / mo</div>
-        <div class="res-sub" id="incomeBaseOut">Projected Income Base: $561,000 (assuming 7% illustrative annual roll-up)</div>
+        <div class="res-sub" id="incomeBaseOut">Projected Income Base: $561,000 (7% illustrative annual roll-up)</div>
 
         <div class="bar-wrap">
           <div class="bar-row">
@@ -264,19 +341,29 @@
 
         <div class="compare-row">
           <div class="compare-item">
-            <span>Income Increase by Waiting</span>
+            <span>Income Lift by Waiting</span>
             <strong id="increaseOut" style="color: #15803d;">+55% More / mo</strong>
           </div>
           <div class="compare-item">
-            <span>Effective Payout on Original Principal</span>
-            <strong id="effectiveYieldOut">9.5% / yr</strong>
+            <span>Cost of Waiting Without a Roll-Up</span>
+            <strong id="costWaitOut" style="color: #b91c1c;">-$13,560 / yr missed</strong>
           </div>
         </div>
       </div>
 
+      <div class="nepq-box">
+        <h3>Questions to Consider Before Setting Your Retirement Timeline:</h3>
+        <ul>
+          <li>If your current account stayed flat—or dropped—over the next 3 to 5 years, how would that change your target retirement date?</li>
+          <li>What would it mean for your spouse and lifestyle to know your exact future paycheck figure years in advance?</li>
+          <li>Would it be helpful to compare the highest roll-up carriers licensed in your state side-by-side?</li>
+        </ul>
+      </div>
+
       <div class="cta-section">
-        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn">See Top Roll-Up Carriers in Your State &rarr;</a>
-        <div class="cta-note">Book a 15-minute discovery call &bull; No obligation</div>
+        <p class="expectation-note">On a quick 15-minute discovery call, we will show you the top deferral roll-up rates available in your state for your exact target start age.</p>
+        <a href="https://marketingsimplifiedcrm.io/book/annuity-discovery-call-15-minutes-jerry-nfmc" target="_blank" rel="noopener" class="cta-btn">See Top Roll-Up Carriers in My State &rarr;</a>
+        <div class="cta-note">15-minute review &bull; No obligation and no pressure to move anything</div>
       </div>
     </div>
   </div>
@@ -289,6 +376,12 @@
     let currentAssets = 400000;
     const sliderEl = document.getElementById('assetsSlider');
     const inputEl = document.getElementById('assetsInput');
+
+    function setPos(p) {
+      document.getElementById('pos401k').classList.toggle('active', p === '401k');
+      document.getElementById('posIra').classList.toggle('active', p === 'ira');
+      document.getElementById('posCash').classList.toggle('active', p === 'cash');
+    }
 
     function fmt(num) {
       return '$' + Math.round(num).toLocaleString('en-US');
@@ -339,7 +432,7 @@
       const midFutureMonthly = (lowFutureMonthly + highFutureMonthly) / 2;
 
       const pctIncrease = nowMonthly > 0 ? ((midFutureMonthly - nowMonthly) / nowMonthly) * 100 : 0;
-      const effectiveYield = assets > 0 ? ((midFutureMonthly * 12) / assets) * 100 : 0;
+      const annualDiff = (midFutureMonthly - nowMonthly) * 12;
 
       document.getElementById('resHeading').textContent = `Projected Monthly Lifetime Income at Age ${startAge}`;
       document.getElementById('futureMonthlyOut').textContent = `${fmt(lowFutureMonthly)} – ${fmt(highFutureMonthly)} / mo`;
@@ -353,7 +446,7 @@
       document.getElementById('laterBar').style.width = '100%';
 
       document.getElementById('increaseOut').textContent = `+${Math.round(pctIncrease)}% More / mo`;
-      document.getElementById('effectiveYieldOut').textContent = `${effectiveYield.toFixed(1)}% / yr`;
+      document.getElementById('costWaitOut').textContent = `-${fmt(annualDiff)} / yr difference`;
     }
 
     document.getElementById('age').addEventListener('input', calculate);
